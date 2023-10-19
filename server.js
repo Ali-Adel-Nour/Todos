@@ -3,21 +3,59 @@ const express = require("express");
 
 const app = express();
 
+app.use(express.json())
+const port = process.env.PORT || 3000
+
 const client = new Client({
   user: "postgres",
   password: "ali",
   host: "localhost",
-  port: 5433, // Change this to the correct port if your PostgreSQL server is running on a different port
+  port: 5433, // Change this to the correct port if your PostgresQL server is running on a different port
   database: "postgres"
 });
+app.get("/", (req, res) => res.sendFile(`${__dirname}/index.html`))
 
 app.get("/todos",async(req,res)=>{
   const rows = await readTodos()
+  res.setHeader("Content-Type", "application/json")
   res.send(JSON.stringify(rows))
 })
-app.listen(8080,()=>{
-  console.log('Web server is listening on port 8080');
+app.listen(port,()=>{
+  console.log('Web server is listening on port '+ port );
 })
+
+app.post("/todos", async (req, res) => {
+  let result = {}
+  try{
+      const reqJson = req.body;
+      result.success = await createTodo(reqJson.todo)
+  }
+  catch(e){
+      result.success=false;
+  }
+  finally{
+      res.setHeader("content-type", "application/json")
+      res.send(JSON.stringify(result))
+  }
+
+})
+
+app.delete("/todos", async (req, res) => {
+  let result = {}
+  try{
+      const reqJson = req.body;
+      result.success = await deleteTodo(reqJson.id)
+  }
+  catch(e){
+      result.success=false;
+  }
+  finally{
+      res.setHeader("content-type", "application/json")
+      res.send(JSON.stringify(result))
+  }
+
+})
+
 start();
 
 async function start() {

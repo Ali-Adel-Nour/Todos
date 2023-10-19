@@ -1,0 +1,23 @@
+POST http://localhost:3000/todos
+Content-Type: application/json
+
+{
+  "todo": "Buy alll"
+}
+
+###
+
+GET http://localhost:3000/todos
+
+
+###
+
+
+DELETE http://localhost:3000/todos
+
+Content-Type: application/json
+
+{
+  "id": 35
+}
+
